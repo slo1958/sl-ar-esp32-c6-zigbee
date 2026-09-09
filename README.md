@@ -33,6 +33,8 @@ Any changes to the configuration of the device (adding or removing a cluster, re
 * If anything goes wrong and the pairing does not start or fail, try the force the device in pairing by pressing the boot button (or any specific button indicated in the README.md of the script) to force pairing mode.
 
 
+![](images/RemoveDevice.png)
+
 ## List of projects
 
 
