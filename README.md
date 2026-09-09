@@ -6,15 +6,14 @@ Experimentations with ESP32-C6-Zero for Zigbee connectivity
 
 
 
-All experimentations are using small original ESP32-C6Zero from WaveShare.
+All experimentations are made using small (original) ESP32-C6-Zero or ESP32-C6-Zero-M from WaveShare.
+
+
+You will find hereunder notes common to all projects (when applicable)
 
 
 
-Notes common to all projects (when applicable)
-
-
-
-The LED GPIO is usually referred to as `RGB\\\_BUILTIN` in the scripts. For sketches that are expected to work with a monochrome led, we use the predefined LED\_PIN. Just in case, the LED\_PIN is digital io 8.
+The LED GPIO is usually referred to as RGB_BUILTIN in the scripts. For sketches that are expected to work with a monochrome led, we use the predefined LED_PIN. Just in case, the LED\_PIN is digital io 8.
 
 
 
