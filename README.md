@@ -38,9 +38,9 @@ Any changes to the configuration of the device (adding or removing a cluster, re
 ## List of projects
 
 
-| Folder| Description | Notes |
+| Folder| Description | Link |
 |---|---|---|
-|  sketch_20260909_Zigbee_On_Off_Light | Shows a light, a binary input, a binary output  |   |
+|  sketch_20260909_Zigbee_On_Off_Light | Shows a light, a binary input, a binary output  | ![](https://github.com/slo1958/sl-ar-esp32-c6-zigbee/tree/main/sketch_20260909_Zigbee_On_Off_Light)  |
 
 
 
