@@ -1,14 +1,7 @@
-# sl-ar-esp32-c6-zigbee
+# sketch\_20260909-esp32-c6-zigbee
 
 
 
-Experimentations with ESP32-C6-Zero for Zigbee connectivity
-
-
-
-
-
-sketch\_20260909-ESP32-C6Zero-Zigbee
 A basic version of a Zigbee endpoint.
 It contains a light, a binary input and a binary output.
 
@@ -17,6 +10,8 @@ On the ESP32-C6 side, we have the following I/O
 * the built-in multicolour led, used as a black/white
 * a button connected between GPIO xx and ground
 * the boot button is used to force a factory reset, when pressed for 3 seconds
+
+
 
 Expected behaviour
 
@@ -27,6 +22,8 @@ Expected behaviour
   * when the user releases the button, the led turns off
   * the status changes is advertised over the network, the status of the light should change in HomeAssistant
 * The binary input (Sensor) will follow the binary output (Switch)
+
+
 
 In HomeAssistant
 
