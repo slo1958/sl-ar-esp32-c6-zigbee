@@ -40,7 +40,7 @@ Any changes to the configuration of the device (adding or removing a cluster, re
 
 
 
-#### Using Arduino IDE
+### Using Arduino IDE
 
 
 
@@ -62,7 +62,7 @@ To get more information about the Espressif boards see \[Espressif Development K
 
 
 
-\## Resources
+### Resources
 
 
 
@@ -78,7 +78,7 @@ To get more information about the Espressif boards see \[Espressif Development K
 
 
 
-### List of projects
+## List of projects
 
 
 
