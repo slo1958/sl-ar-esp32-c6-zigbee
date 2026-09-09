@@ -1,8 +1,12 @@
 # sl-ar-esp32-c6-zigbee
 
+Experimentating with ESP32-C6-Zero for connectivity via Zigbee to HomeAssistant
 
+On the HomeAssistant side:
+- the version used for the tests is xyz
+- the Zigbee coordinator is a SLZB06 connected via ethernet (no wifi) 
 
-Experimentations with ESP32-C6-Zero for Zigbee connectivity
+The choice of the Zigbee coordinator was originally made (long ago) because of the issue with the noisy USB3.0 connections on Raspberry 4. 
 
 
 
@@ -17,15 +21,13 @@ The LED GPIO is usually referred to as RGB_BUILTIN in the scripts. For sketches 
 
 
 
-Unless specified otherwise, all examples are Zigbee end points, even if the original example configure the device as a coordinator.
+Unless specified otherwise:
+- all examples are Zigbee end points, even if the original example configure the device as a coordinator.
+- the sketches contain a call to 'Zigbee.factoryReset();' usually linked to 3sec press on the boot button while operating. This will cause the device to attempt pairing.
 
 
-
-Most sketches contains a call to 'Zigbee.factoryReset();' usually linked to 3sec press on the boot button while operating. This will cause the device to attempt pairing.
-
-
-
-Any changes to the configuration of the device require pairing again, it is not enough to use the 'reconfigure' function from HomeAssistant. Proceed as follow:
+Notes
+Any changes to the configuration of the device (adding or removing a cluster, renaming items, ...) require pairing again, it is not enough to use the 'reconfigure' function from HomeAssistant. Proceed as follow:
 
 * in HomeAssistant, open the page of the device and select the 'Remove' option: HomeAssistant will forget the device.
 * in most cases, the device will automatically enter pairing mode and you can use the 'Add device' function from the Zigbee page in HomeAssistant
