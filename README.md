@@ -6,41 +6,91 @@ Experimentations with ESP32-C6-Zero for Zigbee connectivity
 
 
 
-
-
-sketch\_20260909-ESP32-C6Zero-Zigbee
-A basic version of a Zigbee endpoint.
-It contains a light, a binary input and a binary output.
-
-On the ESP32-C6 side, we have the following I/O
-
-* the built-in multicolour led, used as a black/white
-* a button connected between GPIO xx and ground
-* the boot button is used to force a factory reset, when pressed for 3 seconds
-
-Expected behaviour
-
-* The led will react to 'turn on' and 'turn off' commands sent over the Zigbee network
-* The led will follow the local push button, used as a switch:
-
-  * when the user presses the button, the led turns on (if it was off)
-  * when the user releases the button, the led turns off
-  * the status changes is advertised over the network, the status of the light should change in HomeAssistant
-* The binary input (Sensor) will follow the binary output (Switch)
-
-In HomeAssistant
-
-* after pairing with HomeAssistant, I have the following elements for the device:
-* in the 'Controls' section
-
-  * a light
-  * a switch, labeled 'Switch O/P'
-* in the 'Sensors' section:
-
-  * a sensor, labeled 'Status I/P'
+All experimentations are using small original ESP32-C6Zero from WaveShare.
 
 
 
-Behaviour
-Moving the button on the right of the light from 'off' to 'on' or the other way around in HomeAssistant, the LED responds as expected. The icon of the light takes a bit more time to react. Looks like when the user moves the button, HomeAssistant sends the command over the Zigbee network but updates the icon only when the change is confirmed.
+Notes common to all projects (when applicable)
+
+
+
+The LED GPIO is usually referred to as `RGB\\\_BUILTIN` in the scripts. For sketches that are expected to work with a monochrome led, we use the predefined LED\_PIN. Just in case, the LED\_PIN is digital io 8.
+
+
+
+Unless specified otherwise, all examples are Zigbee end points, even if the original example configure the device as a coordinator.
+
+
+
+Most sketches contains a call to 'Zigbee.factoryReset();' usually linked to 3sec press on the boot button while operating. This will cause the device to attempt pairing.
+
+
+
+Any changes to the configuration of the device require pairing again, it is not enough to use the 'reconfigure' function from HomeAssistant. Proceed as follow:
+
+* in HomeAssistant, open the page of the device and select the 'Remove' option: HomeAssistant will forget the device.
+* in most cases, the device will automatically enter pairing mode and you can use the 'Add device' function from the Zigbee page in HomeAssistant
+* If anything goes wrong and the pairing does not start or fail, try the force the device in pairing by pressing the boot button (or any specific button indicated in the README.md of the script) to force pairing mode.
+
+
+
+
+
+From the original documentation:
+
+
+
+\#### Using Arduino IDE
+
+
+
+To get more information about the Espressif boards see \[Espressif Development Kits](https://www.espressif.com/en/products/devkits).
+
+
+
+\* Before Compile/Verify, select the correct board: `Tools -> Board`.
+
+\* Select the End device Zigbee mode: `Tools -> Zigbee mode: Zigbee ED (end device)`
+
+\* Select Partition Scheme for Zigbee: `Tools -> Partition Scheme: Zigbee 4MB with spiffs`
+
+\* Select the COM port: `Tools -> Port: xxx` where the `xxx` is the detected COM port.
+
+\* Optional: Set debug level to verbose to see all logs from Zigbee stack: `Tools -> Core Debug Level: Verbose`.
+
+
+
+
+
+\## Resources
+
+
+
+\* Official ESP32 Forum: \[Link](https://esp32.com)
+
+\* Arduino-ESP32 Official Repository: \[espressif/arduino-esp32](https://github.com/espressif/arduino-esp32)
+
+\* ESP32-C6 Datasheet: \[Link to datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-c6\_datasheet\_en.pdf)
+
+\* ESP32-H2 Datasheet: \[Link to datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-h2\_datasheet\_en.pdf)
+
+\* Official ESP-IDF documentation: \[ESP-IDF](https://idf.espressif.com)
+
+
+
+
+
+
+
+
+
+
+
+sketch\_20260909\_Zigbee\_On\_Off\_Light:
+
+&#x09;Shows a light, a binary input, a binary output
+
+
+
+
 
