@@ -70,3 +70,5 @@ Moving the button on the right of the light from 'off' to 'on' or the other way 
 ### Switch to sensor feedback
 
 ![](SwitchValueTransferedToTheSensor.png)
+
+#-
