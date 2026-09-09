@@ -33,6 +33,15 @@ Any changes to the configuration of the device (adding or removing a cluster, re
 * If anything goes wrong and the pairing does not start or fail, try the force the device in pairing by pressing the boot button (or any specific button indicated in the README.md of the script) to force pairing mode.
 
 
+## List of projects
+
+
+| Folder| Description | Notes |
+|---|---|---|
+|  sketch_20260909_Zigbee_On_Off_Light | Shows a light, a binary input, a binary output  |   |
+
+
+
 
 
 
@@ -75,21 +84,6 @@ To get more information about the Espressif boards see \[Espressif Development K
 \* ESP32-H2 Datasheet: \[Link to datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-h2\_datasheet\_en.pdf)
 
 \* Official ESP-IDF documentation: \[ESP-IDF](https://idf.espressif.com)
-
-
-
-## List of projects
-
-
-
-
-
-
-
-sketch\_20260909\_Zigbee\_On\_Off\_Light:
-
-&#x09;Shows a light, a binary input, a binary output
-
 
 
 
