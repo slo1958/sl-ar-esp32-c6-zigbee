@@ -10,8 +10,8 @@ Based on the following example sketches:
 
 
 
-* Zigbee\_On\_Off\_Light.ino
-* Zigbee\_Binary\_Input\_Output.ino
+* Zigbee_On_Off_Light.ino
+* Zigbee_Binary_Input_Output.ino
 
 
 
@@ -19,7 +19,7 @@ Based on the following example sketches:
 
 
 
-
+## Description
 
 It contains a light, a binary input and a binary output.
 
@@ -31,7 +31,7 @@ On the ESP32-C6 side, we have the following I/O
 
 
 
-Expected behaviour
+## Expected behaviour
 
 * The led will react to 'turn on' and 'turn off' commands sent over the Zigbee network
 * The led will follow the local push button, used as a switch:
@@ -43,7 +43,7 @@ Expected behaviour
 
 
 
-In HomeAssistant
+## In HomeAssistant
 
 * after pairing with HomeAssistant, I have the following elements for the device:
 * in the 'Controls' section
@@ -56,6 +56,9 @@ In HomeAssistant
 
 
 
-Behaviour
+## Behaviour
 Moving the button on the right of the light from 'off' to 'on' or the other way around in HomeAssistant, the LED responds as expected. The icon of the light takes a bit more time to react. Looks like when the user moves the button, HomeAssistant sends the command over the Zigbee network but updates the icon only when the change is confirmed.
 
+### View after pairing
+
+![](images/DeviceViewedInHomeAssistant.png)
