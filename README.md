@@ -2,20 +2,19 @@
 
 Experimentating with ESP32-C6-Zero for connectivity via Zigbee to HomeAssistant
 
+## HomeAssistant
 On the HomeAssistant side:
-- the version used for the tests is xyz
+- the version used for the tests is 2025.11.1
 - the Zigbee coordinator is a SLZB06 connected via ethernet (no wifi) 
 
 The choice of the Zigbee coordinator was originally made (long ago) because of the issue with the noisy USB3.0 connections on Raspberry 4. 
 
 
+## Notes common to all projects
+
+(unless specified otherwise)
 
 All experimentations are made using small (original) ESP32-C6-Zero or ESP32-C6-Zero-M from WaveShare.
-
-
-You will find hereunder notes common to all projects (when applicable)
-
-
 
 The LED GPIO is usually referred to as RGB_BUILTIN in the scripts. For sketches that are expected to work with a monochrome led, we use the predefined LED_PIN. Just in case, the LED\_PIN is digital io 8.
 
@@ -37,11 +36,11 @@ Any changes to the configuration of the device (adding or removing a cluster, re
 
 
 
-From the original documentation:
+## From the original documentation provided by Waveshare and Espressif:
 
 
 
-\#### Using Arduino IDE
+#### Using Arduino IDE
 
 
 
