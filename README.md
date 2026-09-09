@@ -88,5 +88,10 @@ To get more information about the Espressif boards see \[Espressif Development K
 \* Official ESP-IDF documentation: \[ESP-IDF](https://idf.espressif.com)
 
 
+## Other links
 
+
+\* Zigbee related examples: \[Link to Zigbee examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/Zigbee)
+
+\* Waveshare ESP32-C6-Zero: \[Link to product page](https://docs.waveshare.com/ESP32-C6-Zero)
 
