@@ -62,3 +62,11 @@ Moving the button on the right of the light from 'off' to 'on' or the other way 
 ### View after pairing
 
 ![](images/DeviceViewedInHomeAssistant.png)
+
+### Updating the state of the light
+
+![](images/LightControl.png)
+
+### Switch to sensor feedback
+
+![](SwitchValueTransferedToTheSensor)
