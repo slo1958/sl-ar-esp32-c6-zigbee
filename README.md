@@ -95,3 +95,6 @@ To get more information about the Espressif boards see \[Espressif Development K
 
 \* Waveshare ESP32-C6-Zero: \[Link to product page](https://docs.waveshare.com/ESP32-C6-Zero)
 
+\* SeedStudio ESP32-C6 and Zigbee: \[Link to alternate product](https://wiki.seeedstudio.com/xiao_esp32c6_zigbee_arduino)
+
+
