@@ -76,12 +76,16 @@ void update_base_counter(uint32_t new_value, bool save_to_file){
 }
 
 /********************** Update flow *******************************/
-void update_flow(uint32_t value){
+void update_flow(uint32_t last_value, uint32_t old_value){
 
-  if (last_flow_counter !=  value) {
-    last_flow_counter =  value;
+  uint32_t temp = 0;
 
-    myZBAnalogDeviceFlow.setAnalogInput(value);
+  if (old_value > last_value) temp = 0; else temp = last_value - old_value;
+
+  if (last_flow_counter !=  temp) {
+    last_flow_counter =  temp;
+
+    myZBAnalogDeviceFlow.setAnalogInput(temp);
     myZBAnalogDeviceFlow.reportAnalogInput();
   }
 }
@@ -191,6 +195,10 @@ void setup() {
   update_base_counter(file_get_baseCounter(), false );
   update_pulse_counter(true, file_get_currentCounter(), false );
 
+  last_minute_counter = 0;
+  last_minute_deadline = millis();
+  last_minute_deadline +=  1000 * 60;
+  
   Serial.println("Connected.");
 }
 
@@ -209,7 +217,7 @@ void loop() {
 // ********************* deadline passed ****************************** //
   if (last_minute_deadline < millis()) {
 
-    update_flow(last_minute_counter - pulse_counter);
+    update_flow(pulse_counter, last_minute_counter);
 
     last_minute_deadline = millis() + 1000 * 60;
     last_minute_counter = pulse_counter;
