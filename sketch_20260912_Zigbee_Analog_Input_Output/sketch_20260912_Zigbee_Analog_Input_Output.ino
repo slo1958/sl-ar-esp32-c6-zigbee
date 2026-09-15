@@ -10,7 +10,8 @@
 #error "Zigbee end device mode is not selected in Tools->Zigbee mode"
 #endif
 
-
+#define DURATION_SHOW_RESET_INDICATOR 3000
+#define DURATION_SHOW_IDENTIFY_INDICATOR 3000
 
 // #define NUM_LEDS 1
 // #define LED_CONTROL_PIN  8 //LED_BUILTIN
@@ -31,17 +32,16 @@
 
 ZigbeeAnalog myZBAnalogDevicePulse = ZigbeeAnalog(ANALOG_DEVICE_ENDPOINT_NUMBER);
 ZigbeeAnalog myZBAnalogDeviceTotal = ZigbeeAnalog(ANALOG_DEVICE_ENDPOINT_NUMBER+1);
+ZigbeeAnalog myZBAnalogDeviceFlow   = ZigbeeAnalog(ANALOG_DEVICE_ENDPOINT_NUMBER+2);
 
 uint32_t pulse_counter = 0;
 uint32_t base_counter = 0;
 
-bool led_visible = true;
-bool pulse_indicator = false;
-bool reset_indicator = false;
-bool wait_network_indicator = false;
+uint32_t last_minute_counter = 0;
+uint32_t last_minute_deadline = 0;
+uint32_t last_flow_counter = 0;
 
-unsigned long show_reset_indicator_until = 0;
-unsigned long toggle_vis_at = 0;
+bool pulse_indicator;
 
 /********************** HANDLING ANALOG CHANGES *******************/
 void onAnalogOutputChange(float analog_output) {
@@ -51,13 +51,16 @@ void onAnalogOutputChange(float analog_output) {
   Serial.printf("Received analog output change: %.1f\r\n", analog_output);
 }
 
-
+/********************** HANDLING IDENTIFY ****************************/
+void handle_identify(uint16_t value) {
+  show_green_led(DURATION_SHOW_IDENTIFY_INDICATOR);
+  show_red_led(DURATION_SHOW_IDENTIFY_INDICATOR);
+}
 
 /********************** HANDLING INPUT ****************************/
 void handle_pulse(bool state) {
-// Echo the pulse to the led
+  if(pulse_indicator != state) show_blue_led(500);
   pulse_indicator = state;
-  refresh_led();
 }
 
 /********************* Update base counter ************************/
@@ -71,6 +74,18 @@ void update_base_counter(uint32_t new_value, bool save_to_file){
   if (save_to_file) file_put_baseCounter(base_counter);
 
 }
+
+/********************** Update flow *******************************/
+void update_flow(uint32_t value){
+
+  if (last_flow_counter !=  value) {
+    last_flow_counter =  value;
+
+    myZBAnalogDeviceFlow.setAnalogInput(value);
+    myZBAnalogDeviceFlow.reportAnalogInput();
+  }
+}
+
 
 /********************* Update pulse counter ***********************/
 void update_pulse_counter(bool increment, uint32_t forced_value, bool save_to_file){
@@ -87,37 +102,6 @@ void update_pulse_counter(bool increment, uint32_t forced_value, bool save_to_fi
   if (save_to_file)  file_put_currentCounter(pulse_counter);
 
 }
-
-void  refresh_led(){
-  uint16_t redchannel = 0;
-  uint16_t greenchannel = 0;
-  uint16_t bluechannel = 0;
-
-  if (wait_network_indicator || pulse_indicator || reset_indicator){ 
-
-    if (show_reset_indicator_until < millis()) {show_reset_indicator_until=0; reset_indicator=false;}
-  
-    if (toggle_vis_at < 1) {toggle_vis_at = millis()+500;led_visible=true;}
-
-    if (toggle_vis_at < millis()) {toggle_vis_at = millis()+500;led_visible=!led_visible;}
-
-    if (!led_visible) {clearWLed();return;}
-
-    if (wait_network_indicator) redchannel = 127;
-    if (pulse_indicator) bluechannel = 127;
-    if (reset_indicator) greenchannel = 127;
-    
-    setWLed(redchannel, greenchannel, bluechannel);
-
-    return;
-  } else {
-    clearWLed();
-    led_visible=false;
-    return;
-  }
-
-} 
-
 
 
 /********************* Arduino functions **************************/
@@ -145,20 +129,30 @@ void setup() {
   myZBAnalogDevicePulse.setAnalogInputDescription("Counter delta (l)");
   myZBAnalogDevicePulse.setAnalogInputResolution(1);
 
+  myZBAnalogDevicePulse.onIdentify(&handle_identify);
+  
 /************** Setup Analog Input, reporting total **************** */
   myZBAnalogDeviceTotal.addAnalogInput();
   myZBAnalogDeviceTotal.setAnalogInputApplication(ESP_ZB_ZCL_AI_COUNT_UNITLESS_OTHER);
   myZBAnalogDeviceTotal.setAnalogInputDescription("Counter total (l)");
   myZBAnalogDeviceTotal.setAnalogInputResolution(1);
-
+  
 /************** Setup Analog outnput, receiving base counter value **************** */
   myZBAnalogDeviceTotal.addAnalogOutput();
   myZBAnalogDeviceTotal.setAnalogOutputApplication(ESP_ZB_ZCL_AI_COUNT_UNITLESS_OTHER);
   myZBAnalogDeviceTotal.setAnalogOutputDescription("Counter base (l)");
   myZBAnalogDeviceTotal.setAnalogOutputResolution(1);
+
+/************** Setup Analog Input, reporting flow (l/min) **************** */
+  myZBAnalogDeviceFlow.addAnalogInput();
+  myZBAnalogDeviceFlow.setAnalogInputApplication(ESP_ZB_ZCL_AI_COUNT_UNITLESS_OTHER);
+  myZBAnalogDeviceFlow.setAnalogInputDescription("Flow (l/min)");
+  myZBAnalogDeviceFlow.setAnalogInputResolution(1);
+
+
   
-    // Set the min and max values for the analog output which is used by HA to limit the range of the analog output
-  myZBAnalogDeviceTotal.setAnalogOutputMinMax(0, 10000);  //-10000 to 10000 RPM
+  // Set the min and max values for the analog output which is used by HA to limit the range of the analog output
+  myZBAnalogDeviceTotal.setAnalogOutputMinMax(0, 9999999);  
 
   // If analog output cluster is added, set callback function for analog output change
   myZBAnalogDeviceTotal.onAnalogOutputChange(onAnalogOutputChange);
@@ -167,6 +161,7 @@ void setup() {
   Serial.println("Adding ZigbeeAnalogDevice endpoint to Zigbee Core");
   Zigbee.addEndpoint(&myZBAnalogDeviceTotal);
   Zigbee.addEndpoint(&myZBAnalogDevicePulse);
+  Zigbee.addEndpoint(&myZBAnalogDeviceFlow);
 
   //*************************
 
@@ -179,21 +174,23 @@ void setup() {
     ESP.restart();
   }
   Serial.println("Connecting to network");
-  wait_network_indicator = true;
+
+  show_red_led(99999);
   
   while (!Zigbee.connected()) {
-    refresh_led();
+    refresh_led_now();
     delay(100);
   }
   
   Serial.println();
 
-  wait_network_indicator = false;
-  refresh_led();
+  show_red_led(0);
 
-  update_pulse_counter(true, file_get_currentCounter(), false );
+  refresh_led_now();
+
   update_base_counter(file_get_baseCounter(), false );
- 
+  update_pulse_counter(true, file_get_currentCounter(), false );
+
   Serial.println("Connected.");
 }
 
@@ -202,6 +199,21 @@ bool last_button_state = false;
 
 void loop() {
   bool button_state;
+
+// ********************* Init or millis() back to zero ****************************** //
+  if (last_minute_deadline == 0 || millis() < 500) {
+    last_minute_deadline = millis() + 1000 * 60;
+    last_minute_counter = pulse_counter;
+  }
+
+// ********************* deadline passed ****************************** //
+  if (last_minute_deadline < millis()) {
+
+    update_flow(last_minute_counter - pulse_counter);
+
+    last_minute_deadline = millis() + 1000 * 60;
+    last_minute_counter = pulse_counter;
+  }
 
   // Checking control button for factory reset
   if (digitalRead(BOOT_BUTTON_PIN) == LOW) {  // Push button pressed
@@ -225,8 +237,7 @@ void loop() {
     delay(100);
     if (digitalRead(COUNTER_RESET_PIN) == LOW) {
       update_pulse_counter(false, 0, true);
-      show_reset_indicator_until = millis()+1000; 
-      reset_indicator = true;
+      show_green_led(DURATION_SHOW_RESET_INDICATOR);
     }
   }
   
@@ -246,7 +257,8 @@ void loop() {
     if (button_state != last_button_state) handle_pulse(false);
     last_button_state = false;
   }
-  refresh_led();
+
+  WLed_loop();
   delay(100);
 
 }
